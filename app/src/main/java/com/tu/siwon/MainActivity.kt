@@ -1,12 +1,12 @@
 package com.tu.siwon
 
-
-import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -33,12 +33,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         findViewById<Button>(R.id.currentLocationButton).setOnClickListener {
-            getDeviceLocation()
+            checkLocationPermission()
         }
 
         // Add listeners for other buttons
-        // ... (버튼들의 리스너들 추가)
+        findViewById<Button>(R.id.touristAttractionsButton).setOnClickListener {
+            // Implement the action for the tourist attractions button
+            // For example: showTouristAttractionsOnMap()
+        }
 
+        findViewById<Button>(R.id.culturalSitesButton).setOnClickListener {
+            // Implement the action for the cultural sites button
+            // For example: showCulturalSitesOnMap()
+        }
+
+        findViewById<Button>(R.id.naturalAttractionsButton).setOnClickListener {
+            // Implement the action for the natural attractions button
+            // For example: showNaturalAttractionsOnMap()
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -52,7 +64,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.uiSettings.isZoomControlsEnabled = true
     }
 
-    @SuppressLint("MissingPermission")
+    private fun checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            getDeviceLocation()
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+            )
+        }
+    }
+
     private fun getDeviceLocation() {
         try {
             fusedLocationClient.lastLocation
@@ -82,4 +109,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             ex.printStackTrace()
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getDeviceLocation()
+                } else {
+                    // Handle the case where the user denied the permission
+                    Toast.makeText(
+                        this,
+                        "Location permission denied. Unable to show current location.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    companion object {
+        private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+    }
 }
+
