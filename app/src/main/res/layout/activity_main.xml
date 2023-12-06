@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -20,47 +21,61 @@
             android:text="관광지" />
 
         <Button
-            android:id="@+id/culturalSitesButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="문화지" />
-
-        <Button
             android:id="@+id/naturalAttractionsButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="자연명소" />
 
+        <Button
+            android:id="@+id/culturalPlacesButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="문화시설" />
+
+        <Button
+            android:id="@+id/zoomInButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Zoom In" />
+
+        <Button
+            android:id="@+id/zoomOutButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Zoom Out" />
+
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/map"
+    <FrameLayout
+        android:id="@+id/mapContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:layout_weight="2">
 
-    <LinearLayout
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+    <ScrollView
+        android:id="@+id/placeListScrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <Button
-            android:id="@+id/restaurantCourseButton"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/placeListLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="맛집코스" />
+            android:orientation="vertical" />
 
-        <Button
-            android:id="@+id/currentLocationButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="현재 위치" />
-
-    </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
+

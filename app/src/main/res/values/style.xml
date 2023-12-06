@@ -6,6 +6,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Add new style attributes here -->
+        <item name="android:windowActionBarOverlay">true</item>
+        <!-- Example: Add more attributes as needed -->
     </style>
 
     <!-- Other styles can be defined here -->
