@@ -1,6 +1,8 @@
 package com.tu.siwon
 
 import android.os.Bundle
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
