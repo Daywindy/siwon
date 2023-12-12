@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/values/styles.xml -->
+<!-- res/values/styles.xml 파일 내의 스타일 정의 -->
 <resources>
 
+
+
+    <!-- Base application theme -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Customize action bar -->
+        <item name="android:windowActionBar">true</item>
+        <item name="android:windowNoTitle">false</item>
+
+
+        <!-- Add this line to fix the issue -->
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <!-- Other styles can be defined here -->
+
 </resources>
+

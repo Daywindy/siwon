@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
-    kotlin("android") version "1.9.0"
-
+    kotlin("android") version "2.0.0-Beta1"
 }
 
 android {
@@ -9,7 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.myapplication25"
+        applicationId = "com.tu.siwon"
         minSdk = 31
         targetSdk = 34
         versionCode = 1
