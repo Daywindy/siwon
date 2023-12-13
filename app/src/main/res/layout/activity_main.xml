@@ -87,8 +87,37 @@
             android:text="메인 지도로 돌아가기"
             android:visibility="gone" />
 
-        <!-- ... (Existing buttons) -->
+        <Button
+            android:id="@+id/btnBackToMainMapFromList"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="메인 지도로 돌아가기"
+            android:visibility="gone" />
 
+        <Button
+            android:id="@+id/btnTouristAttractionsFromList"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="관광지"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnCulturalFacilitiesFromList"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="문화시설"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnNaturalSitesFromList"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="자연명소"
+            android:visibility="gone" />
     </LinearLayout>
 
     <!-- Buttons Container for Name and Category TextViews -->
@@ -124,8 +153,11 @@
         android:layout_above="@id/bottomButtons"
         android:visibility="visible">
 
-        <!-- ... (Existing map fragment) -->
-
+        <fragment
+            android:id="@+id/mapFragment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </FrameLayout>
 
     <!-- ScrollView and ListView for Place List (Initially hidden) -->
