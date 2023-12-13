@@ -6,12 +6,16 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/textViewName"
+        android:id="@+id/placeNameTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textSize="16sp"
+        android:text="장소 이름" />
 
-    <!-- Add other views as needed for your item layout -->
-
+    <TextView
+        android:id="@+id/placeCategoryTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="장소 카테고리" />
 </LinearLayout>
