@@ -56,6 +56,31 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="추천코스" />
+
+        <!-- 추가된 버튼들 -->
+        <Button
+            android:id="@+id/btnFamilyCourse"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="가족코스"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnCoupleCourse"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="연인코스"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnChildFamilyCourse"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="아동가족코스"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout

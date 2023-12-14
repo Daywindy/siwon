@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         Place("시흥갯골생태공원", "자연명소", 37.3895, 126.7808),
         Place("은계호수공원", "문화시설", 37.4454, 126.8065),
         // ... (other places)
-
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,8 +61,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         findViewById<Button>(R.id.btnRecommendCourse).setOnClickListener {
-            showPlacesList()
+            showRecommendCourseButtons()
         }
+
+        findViewById<Button>(R.id.btnFamilyCourse).setOnClickListener { showCourseMap("가족코스") }
+        findViewById<Button>(R.id.btnCoupleCourse).setOnClickListener { showCourseMap("연인코스") }
+        findViewById<Button>(R.id.btnChildFamilyCourse).setOnClickListener { showCourseMap("아동가족코스") }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -139,8 +142,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                             MarkerOptions().position(currentLatLng).title("Your Location")
                                 .snippet("You are here.")
                         )
-
-                        currentLocationMarker?.showInfoWindow()
                     } else {
                         Toast.makeText(
                             this,
@@ -171,7 +172,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     ).show()
                 }
             }
+            else -> {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+            }
         }
+    }
+
+    private fun showRecommendCourseButtons() {
+        findViewById<LinearLayout>(R.id.topButtons).visibility = View.GONE
+        findViewById<LinearLayout>(R.id.bottomButtons).visibility = View.GONE
+        findViewById<LinearLayout>(R.id.buttonsContainer).visibility = View.VISIBLE
+    }
+
+    private fun showCourseMap(courseType: String) {
+        Toast.makeText(this, "Showing map for $courseType", Toast.LENGTH_SHORT).show()
+        // Implement the logic to show the map for the selected course type
+        // You can start a new activity or fragment to show the map for the selected course
+        // and add a back button to return to the main map
     }
 
     companion object {
