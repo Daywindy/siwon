@@ -27,6 +27,7 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
+            <!-- 관광지 버튼 -->
             <Button
                 android:id="@+id/btnTouristAttractions"
                 android:layout_width="0dp"
@@ -36,6 +37,7 @@
                 android:minWidth="120dp"
                 android:minHeight="48dp" />
 
+            <!-- 문화시설 버튼 -->
             <Button
                 android:id="@+id/btnCulturalFacilities"
                 android:layout_width="0dp"
@@ -45,12 +47,23 @@
                 android:minWidth="120dp"
                 android:minHeight="48dp" />
 
+            <!-- 자연명소 버튼 -->
             <Button
                 android:id="@+id/btnNaturalSites"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="자연명소"
+                android:minWidth="120dp"
+                android:minHeight="48dp" />
+
+            <!-- 지도에 장소 표시하는 버튼 -->
+            <Button
+                android:id="@+id/btnShowPlacesOnMap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="지도에 표시"
                 android:minWidth="120dp"
                 android:minHeight="48dp" />
 

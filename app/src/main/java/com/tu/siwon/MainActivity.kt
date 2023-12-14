@@ -1,9 +1,9 @@
 package com.tu.siwon
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -11,14 +11,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.ListView
-import android.widget.FrameLayout
+import com.google.android.gms.maps.model.*
 
 data class Place(val name: String, val category: String, val latitude: Double, val longitude: Double)
 
@@ -60,28 +53,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         Place("이사벨 목장", "문화시설", 37.4375, 126.7972),
         Place("중부도서관", "문화시설", 37.3812, 126.7342),
         Place("교동도서관", "문화시설", 37.4461, 126.7846),
-        Place("은행도서관", "문화시설", 37.3528, 126.744)
+        Place("은행도서관", "문화시설", 37.3528, 126.744),
     )
 
-    private lateinit var btnTouristAttractions: Button
-    private lateinit var btnCulturalFacilities: Button
-    private lateinit var btnNaturalSites: Button
-    private lateinit var btnRealTimeLocation: Button
-    private lateinit var btnRecommendCourse: Button
-    private lateinit var btnBackToMainMap: Button
-    private lateinit var btnFamilyCourse: Button
-    private lateinit var btnCoupleCourse: Button
-    private lateinit var btnChildFamilyCourse: Button
     private lateinit var btnBackToMainMapFromList: Button
     private lateinit var btnTouristAttractionsFromList: Button
     private lateinit var btnCulturalFacilitiesFromList: Button
     private lateinit var btnNaturalSitesFromList: Button
-    private lateinit var btnFamilyCourseRecommend: Button
-    private lateinit var btnCoupleCourseRecommend: Button
-    private lateinit var btnChildFamilyCourseRecommend: Button
-
-    private var screenHeight: Int = 0
-    private var listViewHeight: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,112 +74,106 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        btnTouristAttractions = findViewById(R.id.btnTouristAttractions)
-        btnCulturalFacilities = findViewById(R.id.btnCulturalFacilities)
-        btnNaturalSites = findViewById(R.id.btnNaturalSites)
-        btnRealTimeLocation = findViewById(R.id.btnRealTimeLocation)
-        btnRecommendCourse = findViewById(R.id.btnRecommendCourse)
-        btnBackToMainMap = findViewById(R.id.btnBackToMainMap)
+        // Initialize the buttons
         btnBackToMainMapFromList = findViewById(R.id.btnBackToMainMapFromList)
         btnTouristAttractionsFromList = findViewById(R.id.btnTouristAttractionsFromList)
         btnCulturalFacilitiesFromList = findViewById(R.id.btnCulturalFacilitiesFromList)
         btnNaturalSitesFromList = findViewById(R.id.btnNaturalSitesFromList)
-        btnFamilyCourseRecommend = findViewById(R.id.btnFamilyCourseRecommend)
-        btnCoupleCourseRecommend = findViewById(R.id.btnCoupleCourseRecommend)
-        btnChildFamilyCourseRecommend = findViewById(R.id.btnChildFamilyCourseRecommend)
 
-        btnTouristAttractions.setOnClickListener { showPlacesOnMap("관광지") }
-        btnCulturalFacilities.setOnClickListener { showPlacesOnMap("문화시설") }
-        btnNaturalSites.setOnClickListener { showPlacesOnMap("자연명소") }
-        btnRealTimeLocation.setOnClickListener { checkLocationPermission() }
-        btnRecommendCourse.setOnClickListener { showPlacesList() }
-        btnBackToMainMap.setOnClickListener { showMainMap() }
-        btnFamilyCourse.setOnClickListener { showRecommendationMap("가족코스") }
-        btnCoupleCourse.setOnClickListener { showRecommendationMap("연인코스") }
-        btnChildFamilyCourse.setOnClickListener { showRecommendationMap("아동가족코스") }
-        btnBackToMainMapFromList.setOnClickListener { showMainMap() }
-        btnTouristAttractionsFromList.setOnClickListener { showPlacesOnMap("관광지") }
-        btnCulturalFacilitiesFromList.setOnClickListener { showPlacesOnMap("문화시설") }
-        btnNaturalSitesFromList.setOnClickListener { showPlacesOnMap("자연명소") }
-        btnFamilyCourseRecommend.setOnClickListener { showRecommendationMap("가족코스") }
-        btnCoupleCourseRecommend.setOnClickListener { showRecommendationMap("연인코스") }
-        btnChildFamilyCourseRecommend.setOnClickListener { showRecommendationMap("아동가족코스") }
+        findViewById<Button>(R.id.btnTouristAttractions).setOnClickListener {
+            showPlacesOnMap("관광지")
+        }
 
-        screenHeight = resources.displayMetrics.heightPixels
+        findViewById<Button>(R.id.btnCulturalFacilities).setOnClickListener {
+            showPlacesOnMap("문화시설")
+        }
+
+        findViewById<Button>(R.id.btnNaturalSites).setOnClickListener {
+            showPlacesOnMap("자연명소")
+        }
+
+        findViewById<Button>(R.id.btnRealTimeLocation).setOnClickListener {
+            checkLocationPermission()
+        }
+
+        findViewById<Button>(R.id.btnRecommendCourse).setOnClickListener {
+            showPlacesList()
+        }
+
+        findViewById<Button>(R.id.btnBackToMainMap).setOnClickListener {
+            showMainMap()
+        }
+
+        // Additional button click events
+        btnBackToMainMapFromList.setOnClickListener {
+            showMainMap()
+        }
+
+        btnTouristAttractionsFromList.setOnClickListener {
+            showPlacesOnMap("관광지")
+        }
+
+        btnCulturalFacilitiesFromList.setOnClickListener {
+            showPlacesOnMap("문화시설")
+        }
+
+        btnNaturalSitesFromList.setOnClickListener {
+            showPlacesOnMap("자연명소")
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
         val koreaLocation = LatLng(35.9078, 127.7669)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(koreaLocation, 7f))
+
         mMap.uiSettings.isZoomControlsEnabled = true
     }
 
-    private fun showRecommendationMap(courseType: String) {
+    private fun showMainMap() {
         mapContainer.visibility = View.VISIBLE
-        placeListView.visibility = View.VISIBLE
+        placeListView.visibility = View.GONE
+        buttonsContainer.visibility = View.VISIBLE
+        findViewById<Button>(R.id.btnBackToMainMap).visibility = View.GONE
+
+        mMap.clear()
+
+        val koreaLocation = LatLng(35.9078, 127.7669)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(koreaLocation, 7f))
+
+        mMap.uiSettings.isZoomControlsEnabled = true
+    }
+
+    private fun showPlacesOnMap(category: String) {
+        mapContainer.visibility = View.VISIBLE
+        placeListView.visibility = View.GONE
         buttonsContainer.visibility = View.VISIBLE
         findViewById<Button>(R.id.btnBackToMainMap).visibility = View.VISIBLE
         mMap.clear()
 
-        val filteredPlaces = places.filter { it.category == courseType }
+        val filteredPlaces = places.filter { it.category == category }
 
         if (filteredPlaces.isNotEmpty()) {
             val boundsBuilder = LatLngBounds.builder()
 
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    if (location != null) {
-                        val currentLatLng = LatLng(location.latitude, location.longitude)
+            for (place in filteredPlaces) {
+                val location = LatLng(place.latitude, place.longitude)
+                boundsBuilder.include(location)
+                mMap.addMarker(MarkerOptions().position(location).title(place.name))
+            }
 
-                        val sortedPlaces = filteredPlaces.sortedBy {
-                            val distance = FloatArray(1)
-                            Location.distanceBetween(
-                                it.latitude,
-                                it.longitude,
-                                location.latitude,
-                                location.longitude,
-                                distance
-                            )
-                            distance[0].toDouble()
-                        }
+            val bounds = boundsBuilder.build()
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100, 400, 0))
 
-                        for (place in sortedPlaces) {
-                            val placeLocation = LatLng(place.latitude, place.longitude)
-                            boundsBuilder.include(placeLocation)
-                            mMap.addMarker(MarkerOptions().position(placeLocation).title(place.name))
-                        }
-
-                        val bounds = boundsBuilder.build()
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100, 400, 0))
-
-                        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, sortedPlaces.map { it.name })
-                        placeListView.adapter = adapter
-
-                        placeListView.setOnItemClickListener { _, _, position, _ ->
-                            val selectedPlace = sortedPlaces[position]
-                            showRecommendationMap(selectedPlace.category)
-                        }
-
-                        listViewHeight = placeListView.height
-
-                        if (listViewHeight > screenHeight * 2 / 3) {
-                            placeListView.layoutParams.height = (screenHeight * 2 / 3)
-                            placeListView.layoutParams = placeListView.layoutParams
-                            placeListView.requestLayout()
-                            placeListView.setOnTouchListener { _, event ->
-                                if (event.action == MotionEvent.ACTION_MOVE) {
-                                    return@setOnTouchListener true
-                                }
-                                false
-                            }
-                        } else {
-                            placeListView.setOnTouchListener(null)
-                        }
-                    } else {
-                        Toast.makeText(this, "Unable to get current location.", Toast.LENGTH_SHORT).show()
-                    }
-                }
+            // Check if the list view is covering more than 2/3 of the screen height
+            val screenHeight = resources.displayMetrics.heightPixels
+            val listViewHeight = placeListView.height
+            if (listViewHeight > screenHeight * 2 / 3) {
+                // Enable scrolling for the list view
+                placeListView.layoutParams.height = (screenHeight * 2 / 3)
+                placeListView.requestLayout()
+            }
         } else {
             Toast.makeText(this, "해당 카테고리에 장소가 없습니다.", Toast.LENGTH_SHORT).show()
         }
@@ -217,13 +189,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, filteredPlaces.map { it.name })
         placeListView.adapter = adapter
 
+        // Set click listeners for buttons in the list view
         placeListView.setOnItemClickListener { _, _, position, _ ->
             val selectedPlace = filteredPlaces[position]
-            showRecommendationMap(selectedPlace.category)
+            showPlacesOnMap(selectedPlace.category)
         }
     }
-
-    // 생략된 부분 생략...
 
     private fun checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(
