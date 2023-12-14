@@ -1,216 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:theme="@android:style/Theme.Black">
 
-    <!-- 맵을 담을 FrameLayout -->
+    <!-- Top Buttons -->
+    <LinearLayout
+        android:id="@+id/topButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnTouristAttractions"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="관광지" />
+
+        <Button
+            android:id="@+id/btnCulturalFacilities"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="문화시설" />
+
+        <Button
+            android:id="@+id/btnNaturalSites"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="자연명소" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnRealTimeLocation"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="실시간 위치" />
+
+        <Button
+            android:id="@+id/btnRecommendCourse"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="추천코스" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/categoryTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:padding="8dp"/>
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/mapContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_below="@id/topButtons"
+        android:layout_above="@id/bottomButtons"
+        android:visibility="visible">
 
-        <!-- 지도를 표시할 Fragment -->
         <fragment
             android:id="@+id/mapFragment"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <!-- 필터링을 위한 상단 버튼들 -->
-        <LinearLayout
-            android:id="@+id/filterButtonsContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <!-- 관광지 버튼 -->
-            <Button
-                android:id="@+id/btnTouristAttractions"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="관광지"
-                android:minWidth="120dp"
-                android:minHeight="48dp" />
-
-            <!-- 문화시설 버튼 -->
-            <Button
-                android:id="@+id/btnCulturalFacilities"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="문화시설"
-                android:minWidth="120dp"
-                android:minHeight="48dp" />
-
-            <!-- 자연명소 버튼 -->
-            <Button
-                android:id="@+id/btnNaturalSites"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="자연명소"
-                android:minWidth="120dp"
-                android:minHeight="48dp" />
-
-            <!-- 지도에 장소 표시하는 버튼 -->
-            <Button
-                android:id="@+id/btnShowPlacesOnMap"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="지도에 표시"
-                android:minWidth="120dp"
-                android:minHeight="48dp" />
-
-        </LinearLayout>
-
     </FrameLayout>
 
-    <!-- 목록을 표시할 ListView -->
     <ListView
         android:id="@+id/placeListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:layout_below="@id/mapContainer" />
-
-    <!-- 하단 액션 버튼들을 담을 LinearLayout -->
-    <LinearLayout
-        android:id="@+id/buttonsContainer"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_alignParentBottom="true">
-
-        <!-- 현재 위치로 이동하는 버튼 -->
-        <Button
-            android:id="@+id/btnRealTimeLocation"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="현재 위치"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-        <!-- 코스 추천 버튼 -->
-        <Button
-            android:id="@+id/btnRecommendCourse"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="코스 추천"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-        <!-- 목록에서 메인 맵으로 이동하는 버튼 -->
-        <Button
-            android:id="@+id/btnBackToMainMapFromList"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="목록에서 메인 맵으로"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-        <!-- 목록에서 관광지로 이동하는 버튼 -->
-        <Button
-            android:id="@+id/btnTouristAttractionsFromList"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="목록에서 관광지로"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-        <!-- 목록에서 문화 시설로 이동하는 버튼 -->
-        <Button
-            android:id="@+id/btnCulturalFacilitiesFromList"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="목록에서 문화 시설로"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-        <!-- 목록에서 자연 명소로 이동하는 버튼 -->
-        <Button
-            android:id="@+id/btnNaturalSitesFromList"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="목록에서 자연 명소로"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-        <!-- Main Map으로 이동하는 버튼 -->
-        <Button
-            android:id="@+id/btnBackToMainMap"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Back to Main Map"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-    </LinearLayout>
-
-    <!-- 추천 코스 페이지 -->
-    <RelativeLayout
-        android:id="@+id/recommendCoursePage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-        <!-- 가족 코스 버튼 -->
-        <Button
-            android:id="@+id/btnFamilyCourseRecommend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="가족 코스"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-        <!-- 연인 코스 버튼 -->
-        <Button
-            android:id="@+id/btnCoupleCourseRecommend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="연인 코스"
-            android:layout_below="@id/btnFamilyCourseRecommend"
-            android:layout_centerHorizontal="true"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-        <!-- 아동 코스 버튼 -->
-        <Button
-            android:id="@+id/btnChildFamilyCourseRecommend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="아동 코스"
-            android:layout_below="@id/btnCoupleCourseRecommend"
-            android:layout_centerHorizontal="true"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-        <!-- 가족 코스 페이지에서 메인화면으로 돌아가는 버튼 -->
-        <Button
-            android:id="@+id/btnBackToMainFromRecommend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="돌아가기"
-            android:layout_below="@id/btnChildFamilyCourseRecommend"
-            android:layout_centerHorizontal="true"
-            android:minWidth="120dp"
-            android:minHeight="48dp" />
-
-    </RelativeLayout>
-
+        android:layout_below="@id/bottomButtons"
+        android:visibility="gone"
+        android:padding="8dp"/>
 </RelativeLayout>

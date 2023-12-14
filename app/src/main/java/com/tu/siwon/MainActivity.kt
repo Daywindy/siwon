@@ -1,6 +1,5 @@
 package com.tu.siwon
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -29,37 +28,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val places = listOf(
         Place("시흥갯골생태공원", "자연명소", 37.3895, 126.7808),
         Place("은계호수공원", "문화시설", 37.4454, 126.8065),
-        Place("시흥프리미엄아울렛", "문화시설", 37.3807, 126.7389),
-        Place("오이도", "관광지", 37.3456, 126.6874),
-        Place("시흥시중앙도서관", "문화시설", 37.3483, 126.7356),
-        Place("월곶포구", "자연명소", 37.389, 126.7419),
-        Place("물왕호수", "자연명소", 37.3827, 126.8335),
-        Place("시흥시 연꽃테마파크", "자연명소", 37.4024, 126.8066),
-        Place("소래산산림욕장", "자연명소", 37.3413, 126.7785),
-        Place("시흥 오이도 선사유적공원", "자연명소", 37.3429, 126.6959),
-        Place("옥구공원", "자연명소", 37.3557, 126.7128),
-        Place("시흥오이도박물관", "문화시설", 37.3366, 126.6908),
-        Place("창조자연사박물관", "문화시설", 37.4336, 126.7861),
-        Place("온동물체험농장", "문화시설", 37.4147, 126.7637),
-        Place("따요딸기감귤농장", "관광지", 37.3902, 126.8183),
-        Place("용도수목원", "관광지", 37.4192, 126.8264),
-        Place("거북섬", "관광지", 37.3208, 126.6792),
-        Place("관곡지", "자연명소", 37.4025, 126.8048),
-        Place("계수밤농장", "문화시설", 37.4418, 126.8183),
-        Place("배곧한울공원 해수체험장", "관광지", 37.354, 126.7011),
-        Place("소래산산림욕장", "관광지", 37.3369, 126.7443),
-        Place("호반샘 공원", "자연명소", 37.3786, 126.7281),
-        Place("시화호수공원", "자연명소", 37.3892, 126.7565),
-        Place("이사벨 목장", "문화시설", 37.4375, 126.7972),
-        Place("중부도서관", "문화시설", 37.3812, 126.7342),
-        Place("교동도서관", "문화시설", 37.4461, 126.7846),
-        Place("은행도서관", "문화시설", 37.3528, 126.744),
-    )
+        // ... (other places)
 
-    private lateinit var btnBackToMainMapFromList: Button
-    private lateinit var btnTouristAttractionsFromList: Button
-    private lateinit var btnCulturalFacilitiesFromList: Button
-    private lateinit var btnNaturalSitesFromList: Button
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,12 +44,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        // Initialize the buttons
-        btnBackToMainMapFromList = findViewById(R.id.btnBackToMainMapFromList)
-        btnTouristAttractionsFromList = findViewById(R.id.btnTouristAttractionsFromList)
-        btnCulturalFacilitiesFromList = findViewById(R.id.btnCulturalFacilitiesFromList)
-        btnNaturalSitesFromList = findViewById(R.id.btnNaturalSitesFromList)
 
         findViewById<Button>(R.id.btnTouristAttractions).setOnClickListener {
             showPlacesOnMap("관광지")
@@ -99,27 +64,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         findViewById<Button>(R.id.btnRecommendCourse).setOnClickListener {
             showPlacesList()
         }
-
-        findViewById<Button>(R.id.btnBackToMainMap).setOnClickListener {
-            showMainMap()
-        }
-
-        // Additional button click events
-        btnBackToMainMapFromList.setOnClickListener {
-            showMainMap()
-        }
-
-        btnTouristAttractionsFromList.setOnClickListener {
-            showPlacesOnMap("관광지")
-        }
-
-        btnCulturalFacilitiesFromList.setOnClickListener {
-            showPlacesOnMap("문화시설")
-        }
-
-        btnNaturalSitesFromList.setOnClickListener {
-            showPlacesOnMap("자연명소")
-        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -131,25 +75,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.uiSettings.isZoomControlsEnabled = true
     }
 
-    private fun showMainMap() {
-        mapContainer.visibility = View.VISIBLE
-        placeListView.visibility = View.GONE
-        buttonsContainer.visibility = View.VISIBLE
-        findViewById<Button>(R.id.btnBackToMainMap).visibility = View.GONE
-
-        mMap.clear()
-
-        val koreaLocation = LatLng(35.9078, 127.7669)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(koreaLocation, 7f))
-
-        mMap.uiSettings.isZoomControlsEnabled = true
-    }
-
     private fun showPlacesOnMap(category: String) {
         mapContainer.visibility = View.VISIBLE
         placeListView.visibility = View.GONE
         buttonsContainer.visibility = View.VISIBLE
-        findViewById<Button>(R.id.btnBackToMainMap).visibility = View.VISIBLE
         mMap.clear()
 
         val filteredPlaces = places.filter { it.category == category }
@@ -165,15 +94,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             val bounds = boundsBuilder.build()
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100, 400, 0))
-
-            // Check if the list view is covering more than 2/3 of the screen height
-            val screenHeight = resources.displayMetrics.heightPixels
-            val listViewHeight = placeListView.height
-            if (listViewHeight > screenHeight * 2 / 3) {
-                // Enable scrolling for the list view
-                placeListView.layoutParams.height = (screenHeight * 2 / 3)
-                placeListView.requestLayout()
-            }
         } else {
             Toast.makeText(this, "해당 카테고리에 장소가 없습니다.", Toast.LENGTH_SHORT).show()
         }
@@ -183,17 +103,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapContainer.visibility = View.GONE
         placeListView.visibility = View.VISIBLE
         buttonsContainer.visibility = View.GONE
-        findViewById<Button>(R.id.btnBackToMainMap).visibility = View.VISIBLE
 
         val filteredPlaces = places.filter { it.category == "선호 장소 카테고리" }
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, filteredPlaces.map { it.name })
         placeListView.adapter = adapter
-
-        // Set click listeners for buttons in the list view
-        placeListView.setOnItemClickListener { _, _, position, _ ->
-            val selectedPlace = filteredPlaces[position]
-            showPlacesOnMap(selectedPlace.category)
-        }
     }
 
     private fun checkLocationPermission() {

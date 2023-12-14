@@ -21,16 +21,16 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Added Service Element -->
+        <!-- Added Service Declaration -->
         <service
-            android:name="MyNavigationService"
-            android:foregroundServiceType="location">
-            <!-- Any inner elements would go here if needed. -->
+            android:name=".MyNavigationService"
+            android:exported="false">
+            <!-- Any inner elements specific to the service would go here if needed. -->
         </service>
+
     </application>
 </manifest>
