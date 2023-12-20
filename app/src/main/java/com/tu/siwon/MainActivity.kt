@@ -1,18 +1,27 @@
-package com.tu.siwon
 
-import android.content.pm.PackageManager
-import android.location.Location
+package com.tu.swion
+
+pacakage com.tu.swion
+ipmport android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.ListView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.*
-
-data class Place(val name: String, val category: String, val latitude: Double, val longitude: Double)
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -25,173 +34,85 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var buttonsContainer: LinearLayout
     private lateinit var mapFragment: SupportMapFragment
 
-    private val places = listOf(
-        Place("시흥갯골생태공원", "자연명소", 37.3895, 126.7808),
-        Place("은계호수공원", "문화시설", 37.4454, 126.8065),
-        // ... (other places)
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         mapContainer = findViewById(R.id.mapContainer)
         placeListView = findViewById(R.id.placeListView)
         buttonsContainer = findViewById(R.id.buttonsContainer)
 
-        mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        findViewById<Button>(R.id.btnTouristAttractions).setOnClickListener {
-            showPlacesOnMap("관광지")
+        val showFamilyCourseButton: Button = findViewById(R.id.showFamilyCourseButton)
+        showFamilyCourseButton.setOnClickListener {
+            showPlacesOnMapWithLines(
+                listOf(
+                    Place("시흥갯골생태공원", "자연명소", 37.3895, 126.7808),
+                    // ... (add more places as needed)
+                )
+            )
         }
 
-        findViewById<Button>(R.id.btnCulturalFacilities).setOnClickListener {
-            showPlacesOnMap("문화시설")
+        val showDateCourseButton: Button = findViewById(R.id.showDateCourseButton)
+        showDateCourseButton.setOnClickListener {
+            showPlacesOnMapWithLines(
+                listOf(
+                    Place("놀숲 시흥은행점", "연인데이트코스", 37.3734, 126.7339),
+                    // ... (add more places as needed)
+                )
+            )
         }
 
-        findViewById<Button>(R.id.btnNaturalSites).setOnClickListener {
-            showPlacesOnMap("자연명소")
+        val showChildFamilyCourseButton: Button = findViewById(R.id.showChildFamilyCourseButton)
+        showChildFamilyCourseButton.setOnClickListener {
+            showPlacesOnMapWithLines(
+                listOf(
+                    Place("갯골생태공원", "아동가족코스", 37.3895, 126.7808),
+                    // ... (add more places as needed)
+                )
+            )
         }
-
-        findViewById<Button>(R.id.btnRealTimeLocation).setOnClickListener {
-            checkLocationPermission()
-        }
-
-        findViewById<Button>(R.id.btnRecommendCourse).setOnClickListener {
-            showRecommendCourseButtons()
-        }
-
-        findViewById<Button>(R.id.btnFamilyCourse).setOnClickListener { showCourseMap("가족코스") }
-        findViewById<Button>(R.id.btnCoupleCourse).setOnClickListener { showCourseMap("연인코스") }
-        findViewById<Button>(R.id.btnChildFamilyCourse).setOnClickListener { showCourseMap("아동가족코스") }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
-        val koreaLocation = LatLng(35.9078, 127.7669)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(koreaLocation, 7f))
-
-        mMap.uiSettings.isZoomControlsEnabled = true
+        checkLocationPermission()
     }
 
-    private fun showPlacesOnMap(category: String) {
+    private fun showPlacesOnMapWithLines(places: List<Place>) {
         mapContainer.visibility = View.VISIBLE
         placeListView.visibility = View.GONE
         buttonsContainer.visibility = View.VISIBLE
         mMap.clear()
 
-        val filteredPlaces = places.filter { it.category == category }
+        val boundsBuilder = LatLngBounds.builder()
 
-        if (filteredPlaces.isNotEmpty()) {
-            val boundsBuilder = LatLngBounds.builder()
+        for (i in 0 until places.size) {
+            val place = places[i]
+            val location = LatLng(place.latitude, place.longitude)
+            boundsBuilder.include(location)
 
-            for (place in filteredPlaces) {
-                val location = LatLng(place.latitude, place.longitude)
-                boundsBuilder.include(location)
-                mMap.addMarker(MarkerOptions().position(location).title(place.name))
+            mMap.addMarker(MarkerOptions().position(location).title(place.name))
+
+            if (i < places.size - 1) {
+                val nextPlace = places[i + 1]
+                val nextLocation = LatLng(nextPlace.latitude, nextPlace.longitude)
+                mMap.addPolyline(PolylineOptions().add(location, nextLocation).color(Color.BLUE))
             }
-
-            val bounds = boundsBuilder.build()
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100, 400, 0))
-        } else {
-            Toast.makeText(this, "해당 카테고리에 장소가 없습니다.", Toast.LENGTH_SHORT).show()
         }
-    }
 
-    private fun showPlacesList() {
-        mapContainer.visibility = View.GONE
-        placeListView.visibility = View.VISIBLE
-        buttonsContainer.visibility = View.GONE
-
-        val filteredPlaces = places.filter { it.category == "선호 장소 카테고리" }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, filteredPlaces.map { it.name })
-        placeListView.adapter = adapter
+        val bounds = boundsBuilder.build()
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100, 400, 0))
     }
 
     private fun checkLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            getDeviceLocation()
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
-            )
-        }
+        // Check for location permission
+        // ...
     }
 
-    private fun getDeviceLocation() {
-        try {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    if (location != null) {
-                        val currentLatLng = LatLng(location.latitude, location.longitude)
-                        mMap.clear()
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-
-                        currentLocationMarker?.remove()
-                        currentLocationMarker = mMap.addMarker(
-                            MarkerOptions().position(currentLatLng).title("Your Location")
-                                .snippet("You are here.")
-                        )
-                    } else {
-                        Toast.makeText(
-                            this,
-                            "Unable to get location information.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-        } catch (ex: SecurityException) {
-            ex.printStackTrace()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getDeviceLocation()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Location permission denied. Unable to show current location.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-            else -> {
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-            }
-        }
-    }
-
-    private fun showRecommendCourseButtons() {
-        findViewById<LinearLayout>(R.id.topButtons).visibility = View.GONE
-        findViewById<LinearLayout>(R.id.bottomButtons).visibility = View.GONE
-        findViewById<LinearLayout>(R.id.buttonsContainer).visibility = View.VISIBLE
-    }
-
-    private fun showCourseMap(courseType: String) {
-        Toast.makeText(this, "Showing map for $courseType", Toast.LENGTH_SHORT).show()
-        // Implement the logic to show the map for the selected course type
-        // You can start a new activity or fragment to show the map for the selected course
-        // and add a back button to return to the main map
-    }
-
-    companion object {
-        private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
-    }
+    private data class Place(val name: String, val type: String, val latitude: Double, val longitude: Double)
 }
