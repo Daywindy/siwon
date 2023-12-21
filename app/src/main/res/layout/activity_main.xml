@@ -1,117 +1,83 @@
-<!-- activity_main.xml -->
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- 지도 프래그먼트 Container -->
-    <FrameLayout
+    <Button
+        android:id="@+id/showFamilyCourseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Family Course"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/showDateCourseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recommend Course"
+        android:layout_below="@+id/showFamilyCourseButton"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/showChildFamilyCourseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Child Family Course"
+        android:layout_below="@+id/showDateCourseButton"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/nametextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        android:layout_below="@+id/showChildFamilyCourseButton"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/categorytextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:layout_below="@+id/nametextview"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Map Container -->
+    <RelativeLayout
         android:id="@+id/mapContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/buttonsContainer"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_height="0dp"
+        android:layout_below="@+id/categorytextview"
+        android:layout_above="@+id/placeListView"
+        android:layout_marginTop="16dp">
 
-        <!-- Google 지도 Fragment -->
-        <fragment
+        <!-- Google Maps View -->
+        <com.google.android.gms.maps.MapView
             android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
 
-    </FrameLayout>
-
-    <!-- 장소 목록 ListView -->
     <ListView
         android:id="@+id/placeListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/buttonsContainer"
-        android:layout_alignParentTop="true"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_below="@+id/mapContainer"
+        android:layout_marginTop="16dp"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
-        android:padding="16dp" />
+        android:choiceMode="singleChoice"/>
 
-    <!-- 버튼 Container -->
-    <LinearLayout
+    <!-- Buttons Container -->
+    <Button
         android:id="@+id/buttonsContainer"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:padding="16dp">
-
-        <!-- 실시간 위치 버튼 -->
-        <Button
-            android:id="@+id/showRealTimeLocationButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="실시간 위치" />
-
-        <!-- 관광지 버튼 -->
-        <Button
-            android:id="@+id/showTouristSpotsButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="관광지" />
-
-        <!-- 자연명소 버튼 -->
-        <Button
-            android:id="@+id/showNaturalAttractionsButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="자연명소" />
-
-        <!-- 문화시설 버튼 -->
-        <Button
-            android:id="@+id/showCulturalFacilitiesButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="문화시설" />
-
-        <!-- 추천 코스 버튼 -->
-        <Button
-            android:id="@+id/showRecommendedCoursesButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="추천 코스" />
-
-        <!-- 가족추천코스 버튼 -->
-        <Button
-            android:id="@+id/showFamilyCourseButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="가족추천코스"
-            android:visibility="gone" />
-
-        <!-- 아동가족코스추천 버튼 -->
-        <Button
-            android:id="@+id/showChildFamilyCourseButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="아동가족코스추천"
-            android:visibility="gone" />
-
-        <!-- 연인코스추천 버튼 -->
-        <Button
-            android:id="@+id/showDateCourseButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="연인코스추천"
-            android:visibility="gone" />
-
-    </LinearLayout>
-
+        android:text="Buttons Container"
+        android:layout_below="@+id/placeListView"
+        android:layout_marginTop="16dp"/>
 </RelativeLayout>
