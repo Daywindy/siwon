@@ -277,7 +277,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(markerOptions)
     }
 
-
+    // 선을 추가하는 함수
     private fun addLine(start: LatLng, end: LatLng) {
         mMap.addPolyline(
             PolylineOptions()
