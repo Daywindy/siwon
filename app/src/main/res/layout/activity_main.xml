@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- 버튼 Container -->
     <LinearLayout
         android:id="@+id/buttonsContainer"
         android:layout_width="match_parent"
