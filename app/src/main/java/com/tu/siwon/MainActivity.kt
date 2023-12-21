@@ -268,7 +268,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun addMarker(latitude: Double, longitude: Double, title: String, isCurrentLocation: Boolean = false) {
         val markerOptions = MarkerOptions()
             .position(LatLng(latitude, longitude))
-            .title(title)
+
+
 
         if (isCurrentLocation) {
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
