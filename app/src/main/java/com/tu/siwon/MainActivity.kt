@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var placeListView: ListView
     private lateinit var buttonsContainer: LinearLayout
     private lateinit var mapFragment: SupportMapFragment
-
+    private var category: String = ""
     private val placeList = listOf(
         Place("시흥갯골생태공원", "자연명소", 37.3895, 126.7808),
         Place("은계호수공원", "문화시설", 37.4454, 126.8065),
@@ -167,6 +167,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         placeListView = findViewById(R.id.placeListView)
         buttonsContainer = findViewById(R.id.buttonsContainer)
 
+        // 현재 위치 버튼 클릭 시
+        val showCurrentLocationButton: Button = findViewById(R.id.showCurrentLocationButton)
+        showCurrentLocationButton.setOnClickListener {
+            showCurrentLocation()
+        }
+
         // 가족 코스 추천 버튼 클릭 시
         val showFamilyCourseButton: Button = findViewById(R.id.showFamilyCourseButton)
         showFamilyCourseButton.setOnClickListener {
@@ -183,6 +189,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val showChildFamilyCourseButton: Button = findViewById(R.id.showChildFamilyCourseButton)
         showChildFamilyCourseButton.setOnClickListener {
             showPlacesOnMapWithLines(childFamilyCoursePlaces)
+        }
+
+        // 관광지 버튼 클릭 시
+        val showTouristSpotsButton: Button = findViewById(R.id.showTouristSpotsButton)
+        showTouristSpotsButton.setOnClickListener {
+            showPlacesPage("관광지")
+        }
+
+        // 자연명소 버튼 클릭 시
+        val showNaturalSpotsButton: Button = findViewById(R.id.showNaturalSpotsButton)
+        showNaturalSpotsButton.setOnClickListener {
+            showPlacesPage("자연명소")
+        }
+
+        // 문화시설 버튼 클릭 시
+        val showCulturalFacilitiesButton: Button = findViewById(R.id.showCulturalFacilitiesButton)
+        showCulturalFacilitiesButton.setOnClickListener {
+            showPlacesPage("문화시설")
         }
     }
 
@@ -231,7 +255,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun showPlacesOnMapWithLines(places: List<Place>) {
         mMap.clear() // 기존 마커 및 선 제거
 
-        // 현재 위치 마커 추
+        // 현재 위치 마커 추가
+        showCurrentLocation()
 
         // 장소 목록에 있는 각 장소에 대해 마커 및 선 추가
         for (i in places.indices) {
@@ -268,7 +293,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(markerOptions)
     }
 
-
     private fun addLine(start: LatLng, end: LatLng) {
         mMap.addPolyline(
             PolylineOptions()
@@ -276,6 +300,52 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 .width(5f)
                 .color(Color.RED)
         )
+    }
+
+    // 현재 위치를 표시하는 함수
+    private fun showCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    // 이전 현재 위치 마커가 있으면 제거
+                    currentLocationMarker?.remove()
+
+                    // 현재 위치 마커 추가
+                    val latLng = LatLng(it.latitude, it.longitude)
+                    addMarker(latLng.latitude, latLng.longitude, "현재 위치", true)
+
+                    // 지도 중심을 현재 위치로 이동
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+                }
+            }
+    }
+
+    private fun showPlacesPage(category: String) {
+        // 'category' 멤버 변수에 값을 할당
+        this.category = category
+
+        // 장소 목록을 필터링하여 특정 카테고리의 장소만 보여줌
+        val filteredPlaces = placeList.filter { it.category == this.category }
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, filteredPlaces.map { it.name })
+        placeListView.adapter = adapter
+
+        // 장소 목록 중 첫 번째 장소의 위치로 지도 이동
+        if (filteredPlaces.isNotEmpty()) {
+            val firstPlace = filteredPlaces.first()
+            val latLng = LatLng(firstPlace.latitude, firstPlace.longitude)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+        }
     }
 
     data class Place(val name: String, val course: String, val latitude: Double, val longitude: Double)
