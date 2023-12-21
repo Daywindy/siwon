@@ -347,6 +347,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
     }
-
     data class Place(val name: String, val course: String, val latitude: Double, val longitude: Double)
 }
