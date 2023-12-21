@@ -4,7 +4,6 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -162,7 +161,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         // 지도 프래그먼트 초기화 및 레이아웃에 추가
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         mapContainer = findViewById(R.id.mapContainer)
@@ -224,33 +222,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     val currentLatLng = LatLng(it.latitude, it.longitude)
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 6f)) // Adjust the zoom level as needed
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
                 }
             }
-
-        // Set initial bounds to South Korea
-        val southKoreaBounds = LatLngBounds.builder()
-            .include(LatLng(33.0, 124.0)) // Southwest corner of South Korea
-            .include(LatLng(38.5, 132.0)) // Northeast corner of South Korea
-            .build()
-
-        mMap.setLatLngBoundsForCameraTarget(southKoreaBounds)
     }
 
+    // 장소 목록을 맵에 표시하고, 선으로 연결하는 함수
     private fun showPlacesOnMapWithLines(places: List<Place>) {
-        mMap.clear()
+        mMap.clear() // 기존 마커 및 선 제거
 
-        // 현재 위치 마커 추가
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    val currentLatLng = LatLng(it.latitude, it.longitude)
-                    addMarker(currentLatLng.latitude, currentLatLng.longitude, "현재 위치", true)
-                }
-            }
+        // 현재 위치 마커 추
 
         // 장소 목록에 있는 각 장소에 대해 마커 및 선 추가
-        val boundsBuilder = LatLngBounds.builder()
         for (i in places.indices) {
             val place = places[i]
             val latLng = LatLng(place.latitude, place.longitude)
@@ -262,22 +245,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val prevLatLng = LatLng(prevPlace.latitude, prevPlace.longitude)
                 addLine(prevLatLng, latLng)
             }
-
-            boundsBuilder.include(latLng)
         }
 
+        // 마지막 장소와 첫 번째 장소를 선으로 연결
         val firstPlace = places.first()
         val firstLatLng = LatLng(firstPlace.latitude, firstPlace.longitude)
         val lastPlace = places.last()
         val lastLatLng = LatLng(lastPlace.latitude, lastPlace.longitude)
         addLine(lastLatLng, firstLatLng)
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100))
     }
 
+    // 마커를 추가하는 함수
     private fun addMarker(latitude: Double, longitude: Double, title: String, isCurrentLocation: Boolean = false) {
         val markerOptions = MarkerOptions()
             .position(LatLng(latitude, longitude))
+            .title(title)
 
         if (isCurrentLocation) {
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
@@ -285,6 +267,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mMap.addMarker(markerOptions)
     }
+
 
     private fun addLine(start: LatLng, end: LatLng) {
         mMap.addPolyline(
@@ -295,5 +278,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         )
     }
 
-    data class Place(val name: String, val type: String, val latitude: Double, val longitude: Double)
+    data class Place(val name: String, val course: String, val latitude: Double, val longitude: Double)
 }
