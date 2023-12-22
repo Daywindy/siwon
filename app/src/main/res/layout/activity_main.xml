@@ -1,11 +1,9 @@
-<!-- activity_main.xml -->
-
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-
     <LinearLayout
         android:id="@+id/buttonsContainer"
         android:layout_width="match_parent"
@@ -21,7 +19,6 @@
             android:layout_weight="1"
             android:text="자연명소" />
 
-        <!-- 관광지 버튼 -->
         <Button
             android:id="@+id/showTouristSpotsButton"
             android:layout_width="0dp"
@@ -29,7 +26,6 @@
             android:layout_weight="1"
             android:text="관광지" />
 
-        <!-- 문화시설 버튼 -->
         <Button
             android:id="@+id/showCulturalFacilitiesButton"
             android:layout_width="0dp"
@@ -37,24 +33,21 @@
             android:layout_weight="1"
             android:text="문화시설" />
 
-        <!-- 추천 코스 버튼 -->
-        <Button
-            android:id="@+id/showRecommendedCoursesButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="추천 코스" />
-
-        <!-- 현재 위치 버튼 -->
         <Button
             android:id="@+id/showCurrentLocationButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="현재위치" />
+
+        <Button
+            android:id="@+id/showRecommendedCoursesButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="코스추천" />
     </LinearLayout>
 
-    <!-- 지도 프래그먼트 Container -->
     <FrameLayout
         android:id="@+id/mapContainer"
         android:layout_width="match_parent"
@@ -73,7 +66,6 @@
 
     </FrameLayout>
 
-    <!-- 추천 코스 버튼 레이아웃 -->
     <LinearLayout
         android:id="@+id/recommendedCoursesLayout"
         android:layout_width="match_parent"
@@ -83,43 +75,48 @@
         android:padding="16dp"
         android:visibility="gone">
 
-        <!-- 가족추천코스 버튼 -->
         <Button
             android:id="@+id/showFamilyCourseButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="가족추천코스" />
+            android:text="가족 코스" />
 
-        <!-- 아동가족코스추천 버튼 -->
         <Button
             android:id="@+id/showChildFamilyCourseButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="아동가족코스추천" />
+            android:text="아동 코스" />
 
-        <!-- 연인코스추천 버튼 -->
         <Button
             android:id="@+id/showDateCourseButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="연인코스추천" />
+            android:text="연인 코스" />
 
+        <!-- 추가된 이전으로 돌아가는 버튼 -->
+        <Button
+            android:id="@+id/recommendCourseBackButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="이전"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 
-    <!-- 각 페이지 Fragment Container -->
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/buttonsContainer">
+        android:layout_below="@+id/buttonsContainer"
+        android:orientation="vertical">
 
-        <!-- 관광지 페이지 -->
         <FrameLayout
             android:id="@+id/touristSpotsContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:visibility="gone">
 
             <!-- Google 지도 Fragment (2/3 영역) -->
@@ -142,11 +139,11 @@
 
         </FrameLayout>
 
-        <!-- 여기서 placeListView 추가 -->
         <FrameLayout
             android:id="@+id/naturalAttractionsContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:visibility="gone">
 
             <!-- Google 지도 Fragment (2/3 영역) -->
@@ -168,6 +165,79 @@
                 android:padding="16dp" />
 
         </FrameLayout>
-    </ScrollView>
+
+        <FrameLayout
+            android:id="@+id/culturalFacilitiesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone">
+
+            <!-- Google 지도 Fragment (2/3 영역) -->
+            <fragment
+                android:id="@+id/culturalFacilitiesMap"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2" />
+
+            <!-- 장소 목록 (1/3 영역) -->
+            <ListView
+                android:id="@+id/culturalFacilitiesListView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:divider="@android:color/darker_gray"
+                android:dividerHeight="1dp"
+                android:padding="16dp" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/currentLocationContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone">
+
+            <!-- Google 지도 Fragment -->
+            <fragment
+                android:id="@+id/currentLocationMap"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/recommendedCoursesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone">
+
+            <!-- 가족 코스 Fragment -->
+            <fragment
+                android:id="@+id/familyCourseFragment"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!-- 아동 코스 Fragment -->
+            <fragment
+                android:id="@+id/childFamilyCourseFragment"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!-- 연인 코스 Fragment -->
+            <fragment
+                android:id="@+id/dateCourseFragment"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </FrameLayout>
+    </LinearLayout>
 
 </RelativeLayout>

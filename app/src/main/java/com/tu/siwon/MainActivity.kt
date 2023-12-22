@@ -1,9 +1,11 @@
 package com.tu.siwon
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -11,17 +13,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
-import kotlin.text.*
 
-
-fun main() {
-    val char: Char = 'a'
-    val charCategory: CharCategory = char.category
-
-
-    println("Char category: $charCategory")
-}
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -31,7 +24,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var placeListView: ListView
     private lateinit var buttonsContainer: LinearLayout
     private lateinit var mapFragment: SupportMapFragment
-    val category: Any = Any()
+    private lateinit var currentCategory: String
 
     private val placeList = listOf(
         Place("시흥갯골생태공원", "자연명소", 37.3895, 126.7808),
@@ -176,95 +169,97 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         placeListView = findViewById(R.id.placeListView)
         buttonsContainer = findViewById(R.id.buttonsContainer)
 
-        val showCurrentLocationButton: Button = findViewById(R.id.showCurrentLocationButton)
-        showCurrentLocationButton.setOnClickListener {
-            showCurrentLocation()
-        }
-
-        val showFamilyCourseButton: Button = findViewById(R.id.showFamilyCourseButton)
-        showFamilyCourseButton.setOnClickListener {
-            showPlacesOnMapWithLines(familyCoursePlaces)
-        }
-
-        val showDateCourseButton: Button = findViewById(R.id.showDateCourseButton)
-        showDateCourseButton.setOnClickListener {
-            showPlacesOnMapWithLines(dateCoursePlaces)
-        }
-
-        val showChildFamilyCourseButton: Button = findViewById(R.id.showChildFamilyCourseButton)
-        showChildFamilyCourseButton.setOnClickListener {
-            showPlacesOnMapWithLines(childFamilyCoursePlaces)
-        }
+        // ... (기존 코드에서 버튼에 대한 리스너만 수정하고 나머지는 동일하게 유지)
 
         val showTouristSpotsButton: Button = findViewById(R.id.showTouristSpotsButton)
         showTouristSpotsButton.setOnClickListener {
-            showPlacesPage("관광지")
+            showPlacesPage(placeList.filter { it.course == "관광지" }, "관광지")
         }
 
         val showNaturalSpotsButton: Button = findViewById(R.id.showNaturalSpotsButton)
         showNaturalSpotsButton.setOnClickListener {
-            showPlacesPage("자연명소")
+            showPlacesPage(placeList.filter { it.course == "자연명소" }, "자연명소")
         }
 
         val showCulturalFacilitiesButton: Button = findViewById(R.id.showCulturalFacilitiesButton)
         showCulturalFacilitiesButton.setOnClickListener {
-            showPlacesPage("문화시설")
+            showPlacesPage(placeList.filter { it.course == "문화시설" }, "문화시설")
         }
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+     override fun onMapReady(googleMap: GoogleMap) {
+         mMap = googleMap
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                1
-            )
-            return
+         if (ActivityCompat.checkSelfPermission(
+                 this,
+                 android.Manifest.permission.ACCESS_FINE_LOCATION
+             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                 this,
+                 android.Manifest.permission.ACCESS_COARSE_LOCATION
+             ) != PackageManager.PERMISSION_GRANTED
+         ) {
+             ActivityCompat.requestPermissions(
+                 this,
+                 arrayOf(
+                     android.Manifest.permission.ACCESS_FINE_LOCATION,
+                     android.Manifest.permission.ACCESS_COARSE_LOCATION
+                 ),
+                 1
+             )
+             return
+         }
+
+         mMap.isMyLocationEnabled = true
+
+         mMap.setOnMapClickListener { point ->
+             addMarker(point.latitude, point.longitude, "직접 추가한 장소")
+         }
+
+         fusedLocationClient.lastLocation
+             .addOnSuccessListener { location: Location? ->
+                 location?.let {
+                     val currentLatLng = LatLng(it.latitude, it.longitude)
+                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                 }
+             }
+     }
+
+     private fun showPlacesPage(places: List<Place>, category: String) {
+        buttonsContainer.visibility = View.GONE
+        placeListView.visibility = View.VISIBLE
+
+        currentCategory = category
+
+        val sortedPlaces = places.sortedBy { calculateDistance(it.latitude, it.longitude) }
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, sortedPlaces.map { it.name })
+        placeListView.adapter = adapter
+
+        placeListView.setOnItemClickListener { _, _, position, _ ->
+            val selectedPlace = sortedPlaces[position]
+            val latLng = LatLng(selectedPlace.latitude, selectedPlace.longitude)
+            addMarker(latLng.latitude, latLng.longitude, selectedPlace.name)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
-
-        mMap.isMyLocationEnabled = true
-
-        mMap.setOnMapClickListener { point ->
-            addMarker(point.latitude, point.longitude, "직접 추가한 장소")
-        }
-
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    val currentLatLng = LatLng(it.latitude, it.longitude)
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-                }
-            }
     }
 
-    private fun showPlacesOnMapWithLines(places: List<Place>) {
-        mMap.clear()
 
-        showCurrentLocation()
-
-        for (i in places.indices) {
-            val place = places[i]
-            val latLng = LatLng(place.latitude, place.longitude)
-            addMarker(latLng.latitude, latLng.longitude, place.name)
-
-            if (i > 0) {
-                val prevPlace = places[i - 1]
-                val prevLatLng = LatLng(prevPlace.latitude, prevPlace.longitude)
-                drawLine(prevLatLng, latLng)
-            }
+    private fun calculateDistance(latitude: Double, longitude: Double): Float {
+        val currentLocation = mMap.myLocation
+        if (currentLocation != null) {
+            val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+            val placeLatLng = LatLng(latitude, longitude)
+            return FloatArray(1).apply {
+                Location.distanceBetween(
+                    currentLatLng.latitude,
+                    currentLatLng.longitude,
+                    placeLatLng.latitude,
+                    placeLatLng.longitude,
+                    this
+                )
+            }[0]
         }
+        return Float.MAX_VALUE
     }
 
     private fun drawLine(start: LatLng, end: LatLng) {
@@ -282,7 +277,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .title(title)
 
         if (isCurrentLocation) {
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
             currentLocationMarker?.remove()
             currentLocationMarker = mMap.addMarker(markerOptions)
         } else {
@@ -291,59 +286,39 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showCurrentLocation() {
-        try {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location: Location? ->
-                        location?.let {
-                            val currentLatLng = LatLng(it.latitude, it.longitude)
-                            addMarker(currentLatLng.latitude, currentLatLng.longitude, "현재 위치", true)
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-                        }
-                    }
-            } else {
-                // Handle the case where the user doesn't grant the location permission
-                Toast.makeText(
-                    this,
-                    "Location permission not granted. Please enable location access in settings.",
-                    Toast.LENGTH_LONG
-                ).show()
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                1
+            )
+            return
+        }
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    val currentLatLng = LatLng(it.latitude, it.longitude)
+                    addMarker(currentLatLng.latitude, currentLatLng.longitude, "현재 위치", true)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                }
             }
-        } catch (e: SecurityException) {
-            e.printStackTrace()
-            // Handle the SecurityException if needed
-        }
-    }
-
-    private fun showPlacesPage(category: String) {
-        // 'category' 멤버 변수에 값을 할당하지 않음
-
-        // 장소 목록을 필터링하여 특정 카테고리의 장소만 보여줌
-        val filteredPlaces = placeList.filter { it.category == this.category }
-
-
-
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, filteredPlaces.map { it.name })
-        placeListView.adapter = adapter
-
-        // 장소 목록 중 첫 번째 장소의 위치로 지도 이동
-        if (filteredPlaces.isNotEmpty()) {
-            val firstPlace = filteredPlaces.first()
-            val latLng = LatLng(firstPlace.latitude, firstPlace.longitude)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-        }
     }
 
 
     data class Place(val name: String, val course: String, val latitude: Double, val longitude: Double) {
 
 
+        val category: Any = Any()
     }
 }
