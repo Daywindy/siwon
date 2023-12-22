@@ -14,16 +14,23 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 
- class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
+    // 구글 지도 및 현재 위치 관련 변수
     private lateinit var mMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentLocationMarker: Marker? = null
 
+    // UI 관련 변수
     private lateinit var mapContainer: FrameLayout
     private lateinit var placeListView: ListView
     private lateinit var buttonsContainer: LinearLayout
     private lateinit var mapFragment: SupportMapFragment
+    private lateinit var backButton: Button
+    private lateinit var recommendationsButton: Button
+    private lateinit var showFamilyCourseButton: Button
+    private lateinit var showDateCourseButton: Button
+    private lateinit var showChildCourseButton: Button
     private lateinit var currentCategory: String
 
     private val placeList = listOf(
@@ -156,85 +163,123 @@ import com.google.android.gms.maps.model.*
         Place("은계호수공원", "아동가족코스", 37.3911, 126.7716),
         Place("오이도", "아동가족코스", 37.3791, 126.7375)
     )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 지도 및 위치 서비스 초기화
         mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        // UI 요소 초기화
         mapContainer = findViewById(R.id.mapContainer)
         placeListView = findViewById(R.id.placeListView)
         buttonsContainer = findViewById(R.id.buttonsContainer)
+        backButton = findViewById(R.id.backButton)
+        recommendationsButton = findViewById(R.id.showRecommendationsButton)
+        showFamilyCourseButton = findViewById(R.id.showFamilyCourseButton)
+        showDateCourseButton = findViewById(R.id.showDateCourseButton)
+        showChildCourseButton = findViewById(R.id.showChildCourseButton)
 
-        // ... (기존 코드에서 버튼에 대한 리스너만 수정하고 나머지는 동일하게 유지)
-
-        val showTouristSpotsButton: Button = findViewById(R.id.showTouristSpotsButton)
-        showTouristSpotsButton.setOnClickListener {
-            showPlacesPage(placeList.filter { it.course == "관광지" }, "관광지")
+        // 뒤로 가기 버튼 클릭 시 메인 페이지로 돌아가기
+        backButton.setOnClickListener {
+            showMainPage()
         }
 
-        val showNaturalSpotsButton: Button = findViewById(R.id.showNaturalSpotsButton)
-        showNaturalSpotsButton.setOnClickListener {
-            showPlacesPage(placeList.filter { it.course == "자연명소" }, "자연명소")
+        // 추천 코스 버튼 클릭 시 추천 페이지 보여주기
+        recommendationsButton.setOnClickListener {
+            showRecommendationsPage()
         }
 
-        val showCulturalFacilitiesButton: Button = findViewById(R.id.showCulturalFacilitiesButton)
-        showCulturalFacilitiesButton.setOnClickListener {
-            showPlacesPage(placeList.filter { it.course == "문화시설" }, "문화시설")
+        // 가족 코스 버튼 클릭 시 가족 코스 페이지 보여주기
+        showFamilyCourseButton.setOnClickListener {
+            showFamilyCoursePage()
+        }
+
+        // 데이트 코스 버튼 클릭 시 데이트 코스 페이지 보여주기
+        showDateCourseButton.setOnClickListener {
+            showDateCoursePage()
+        }
+
+        // 아동 코스 버튼 클릭 시 아동 코스 페이지 보여주기
+        showChildCourseButton.setOnClickListener {
+            showChildCoursePage()
         }
     }
 
-     override fun onMapReady(googleMap: GoogleMap) {
-         mMap = googleMap
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
 
-         if (ActivityCompat.checkSelfPermission(
-                 this,
-                 android.Manifest.permission.ACCESS_FINE_LOCATION
-             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                 this,
-                 android.Manifest.permission.ACCESS_COARSE_LOCATION
-             ) != PackageManager.PERMISSION_GRANTED
-         ) {
-             ActivityCompat.requestPermissions(
-                 this,
-                 arrayOf(
-                     android.Manifest.permission.ACCESS_FINE_LOCATION,
-                     android.Manifest.permission.ACCESS_COARSE_LOCATION
-                 ),
-                 1
-             )
-             return
-         }
+        // 권한이 허용되었는지 확인하고 현재 위치 설정
+        if (checkLocationPermission()) {
+            mMap.isMyLocationEnabled = true
+            showCurrentLocation()
+        }
 
-         mMap.isMyLocationEnabled = true
+        // 지도를 클릭하면 해당 위치에 마커 추가
+        mMap.setOnMapClickListener { point ->
+            addMarker(point.latitude, point.longitude, "직접 추가한 장소")
+        }
+    }
 
-         mMap.setOnMapClickListener { point ->
-             addMarker(point.latitude, point.longitude, "직접 추가한 장소")
-         }
+    // 메인 페이지로 전환하는 함수
+    private fun showMainPage() {
+        buttonsContainer.visibility = View.VISIBLE
+        placeListView.visibility = View.GONE
+    }
 
-         fusedLocationClient.lastLocation
-             .addOnSuccessListener { location: Location? ->
-                 location?.let {
-                     val currentLatLng = LatLng(it.latitude, it.longitude)
-                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-                 }
-             }
-     }
+    // 추천 페이지로 전환하는 함수
+    private fun showRecommendationsPage() {
+        buttonsContainer.visibility = View.GONE
+        placeListView.visibility = View.VISIBLE
 
-     private fun showPlacesPage(places: List<Place>, category: String) {
+        currentCategory = "추천 코스"
+
+        // 추천 코스 목록 설정
+        val recommendedPlaces = getRecommendedPlaces()
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, recommendedPlaces.map { it.name })
+        placeListView.adapter = adapter
+
+        // 장소를 클릭하면 해당 위치로 이동 및 마커 추가
+        placeListView.setOnItemClickListener { _, _, position, _ ->
+            val selectedPlace = recommendedPlaces[position]
+            val latLng = LatLng(selectedPlace.latitude, selectedPlace.longitude)
+            addMarker(latLng.latitude, latLng.longitude, selectedPlace.name)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+        }
+    }
+
+    // 가족 코스 페이지로 전환하는 함수
+    private fun showFamilyCoursePage() {
+        showPlacesPage(familyCoursePlaces, "가족 코스")
+    }
+
+    // 데이트 코스 페이지로 전환하는 함수
+    private fun showDateCoursePage() {
+        showPlacesPage(dateCoursePlaces, "데이트 코스")
+    }
+
+    // 아동 코스 페이지로 전환하는 함수
+    private fun showChildCoursePage() {
+        showPlacesPage(childFamilyCoursePlaces, "아동 가족 코스")
+    }
+
+    // 장소 페이지를 보여주는 함수
+    private fun showPlacesPage(places: List<Place>, category: String) {
         buttonsContainer.visibility = View.GONE
         placeListView.visibility = View.VISIBLE
 
         currentCategory = category
 
+        // 선택된 카테고리에 따라 장소 정렬
         val sortedPlaces = places.sortedBy { calculateDistance(it.latitude, it.longitude) }
 
+        // 어댑터 설정
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, sortedPlaces.map { it.name })
         placeListView.adapter = adapter
 
+        // 장소를 클릭하면 해당 위치로 이동 및 마커 추가
         placeListView.setOnItemClickListener { _, _, position, _ ->
             val selectedPlace = sortedPlaces[position]
             val latLng = LatLng(selectedPlace.latitude, selectedPlace.longitude)
@@ -243,7 +288,7 @@ import com.google.android.gms.maps.model.*
         }
     }
 
-
+    // 거리 계산 함수
     private fun calculateDistance(latitude: Double, longitude: Double): Float {
         val currentLocation = mMap.myLocation
         if (currentLocation != null) {
@@ -262,6 +307,7 @@ import com.google.android.gms.maps.model.*
         return Float.MAX_VALUE
     }
 
+    // 라인 그리기 함수
     private fun drawLine(start: LatLng, end: LatLng) {
         mMap.addPolyline(
             PolylineOptions()
@@ -271,21 +317,54 @@ import com.google.android.gms.maps.model.*
         )
     }
 
+    // 마커 추가 함수
     private fun addMarker(latitude: Double, longitude: Double, title: String, isCurrentLocation: Boolean = false) {
         val markerOptions = MarkerOptions()
             .position(LatLng(latitude, longitude))
             .title(title)
 
+        // 현재 위치인 경우 파란색 마커로 표시
         if (isCurrentLocation) {
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
             currentLocationMarker?.remove()
             currentLocationMarker = mMap.addMarker(markerOptions)
         } else {
+            // 그 외의 경우 기본 마커로 표시
             mMap.addMarker(markerOptions)
         }
     }
 
+    // 현재 위치 보여주는 함수
     private fun showCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    val currentLatLng = LatLng(it.latitude, it.longitude)
+                    addMarker(currentLatLng.latitude, currentLatLng.longitude, "현재 위치", true)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                }
+            }
+    }
+
+    // 권한 확인 함수
+    private fun checkLocationPermission(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -302,23 +381,17 @@ import com.google.android.gms.maps.model.*
                 ),
                 1
             )
-            return
+            return false
         }
-
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    val currentLatLng = LatLng(it.latitude, it.longitude)
-                    addMarker(currentLatLng.latitude, currentLatLng.longitude, "현재 위치", true)
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
-                }
-            }
+        return true
     }
 
-
-    data class Place(val name: String, val course: String, val latitude: Double, val longitude: Double) {
-
-
-        val category: Any = Any()
+    // 추천 장소 반환 함수
+    private fun getRecommendedPlaces(): List<Place> {
+        // 간단한 추천 로직 (여기서는 가족 코스 추천)
+        return familyCoursePlaces
     }
+
+    // 장소 데이터 클래스
+    data class Place(val name: String, val course: String, val latitude: Double, val longitude: Double)
 }
