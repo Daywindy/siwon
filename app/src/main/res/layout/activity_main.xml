@@ -17,38 +17,53 @@
         <!-- 기존 버튼들 -->
         <Button
             android:id="@+id/showNaturalSpotsButton"
-            android:layout_width="0dp"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="자연명소" />
+            android:text="자연명소"
+            android:textSize="13dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/rounded_corner" />
 
         <Button
             android:id="@+id/showTouristSpotsButton"
-            android:layout_width="0dp"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="관광지" />
+            android:layout_marginEnd="10dp"
+            android:text="관광지"
+            android:textSize="13dp"
+            android:background="@drawable/rounded_corner" />
 
         <Button
             android:id="@+id/showCulturalFacilitiesButton"
-            android:layout_width="0dp"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="문화시설" />
+            android:text="문화시설"
+            android:layout_marginEnd="10dp"
+            android:textSize="13dp"
+            android:background="@drawable/rounded_corner" />
 
         <Button
             android:id="@+id/showCurrentLocationButton"
-            android:layout_width="0dp"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="현재위치" />
+            android:text="현재위치"
+            android:textSize="13dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/rounded_corner" />
 
         <Button
             android:id="@+id/showRecommendedCoursesButton"
-            android:layout_width="0dp"
+            android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="코스추천" />
+            android:text="코스추천"
+            android:textSize="13dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/rounded_corner" />
 
         <!-- 추가된 버튼 -->
         <Button
@@ -91,6 +106,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+
             android:text="자연명소" />
 
         <!-- 문화시설 버튼 -->
