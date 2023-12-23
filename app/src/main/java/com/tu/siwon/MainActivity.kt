@@ -174,7 +174,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // UI 요소 초기화
         mapContainer = findViewById(R.id.mapContainer)
-        placeListView = findViewById(R.id.placeListView)
+        placeListView = findViewById(R.id.placeLitsView)
         buttonsContainer = findViewById(R.id.buttonsContainer)
         backButton = findViewById(R.id.backButton)
         recommendationsButton = findViewById(R.id.showRecommendationsButton)
