@@ -1,8 +1,9 @@
+@file:Suppress("UNREACHABLE_CODE")
+
 package com.tu.siwon
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     // 구글 지도 및 현재 위치 관련 변수
@@ -131,37 +133,37 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         Place("이사벨 목장", "문화시설", 37.4375, 126.7972),
         Place("중부도서관", "문화시설", 37.3812, 126.7342),
         Place("교동도서관", "문화시설", 37.4461, 126.7846),
-        Place("은행도서관", "문화시설", 37.3528, 126.744),
-        Place("오이도선사유적공원", "자연명소", 37.3428, 126.6955),
-        Place("하늘휴게소", "자연명소", 37.3839, 126.8554),
-        Place("시흥관광호텔", "자연명소", 37.3379, 126.7499),
-        Place("놀숲시흥은행점", "자연명소", 37.4451, 126.7988),
-        Place("월곶예술공판장", "자연명소", 37.3862, 126.7406),
-        Place("용도 수목원", "관광지", 37.4193, 126.8264)
+        Place("은행도서관", "문화시설", 41.3528, 126.744),
+        Place("오이도선사유적공원", "자연명소", 38.3428, 126.6955),
+        Place("하늘휴게소", "자연명소", 38.3839, 126.8554),
+        Place("시흥관광호텔", "자연명소", 38.3379, 126.7499),
+        Place("놀숲시흥은행점", "자연명소", 38.4451, 126.7988),
+        Place("월곶예술공판장", "자연명소", 38.3862, 126.7406),
+        Place("용도 수목원", "관광지", 38.4193, 126.8264)
 
     )
 
     private val familyCoursePlaces = listOf(
-        Place("연꽃테마파크", "가족코스", 37.3836, 126.7224),
-        Place("갯골생태공원", "가족코스", 37.3895, 126.7808),
-        Place("오이도", "가족코스", 37.3791, 126.7375),
-        Place("오이도선사유적공원", "가족코스", 37.3793, 126.7456),
-        Place("하늘휴게소", "가족코스", 37.3847, 126.7505),
-        Place("시흥관광호텔핀", "가족코스", 37.3797, 126.7341)
+        Place("연꽃테마파크", "가족코스", 38.3836, 126.7224),
+        Place("갯골생태공원", "가족코스", 38.3895, 126.7808),
+        Place("오이도", "가족코스", 38.3791, 126.7375),
+        Place("오이도선사유적공원", "가족코스", 38.3793, 126.7456),
+        Place("하늘휴게소", "가족코스", 38.3847, 126.7505),
+        Place("시흥관광호텔핀", "가족코스", 38.3797, 126.7341)
     )
 
     private val dateCoursePlaces = listOf(
-        Place("놀숲 시흥은행점", "연인데이트코스", 37.3734, 126.7339),
-        Place("월곶예술공판장 아트독", "연인데이트코스", 37.3877, 126.7429),
-        Place("시흥 프리미엄 아울렛", "연인데이트코스", 37.3803, 126.7293),
-        Place("오이도 빨강등대", "연인데이트코스", 37.3814, 126.7348)
+        Place("놀숲 시흥은행점", "연인데이트코스", 38.3734, 126.7339),
+        Place("월곶예술공판장 아트독", "연인데이트코스", 38.3877, 126.7429),
+        Place("시흥 프리미엄 아울렛", "연인데이트코스", 38.3803, 126.7293),
+        Place("오이도 빨강등대", "연인데이트코스", 38.3814, 126.7348)
     )
 
     private val childFamilyCoursePlaces = listOf(
-        Place("갯골생태공원", "아동가족코스", 37.3895, 126.7808),
-        Place("용도 수목원", "아동가족코스", 37.3802, 126.7272),
-        Place("은계호수공원", "아동가족코스", 37.3911, 126.7716),
-        Place("오이도", "아동가족코스", 37.3791, 126.7375)
+        Place("갯골생태공원", "아동가족코스", 38.3895, 126.7808),
+        Place("용도 수목원", "아동가족코스", 38.3802, 126.7272),
+        Place("은계호수공원", "아동가족코스", 38.3911, 126.7716),
+        Place("오이도", "아동가족코스", 38.3791, 126.7375)
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -182,14 +184,29 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         showDateCourseButton = findViewById(R.id.showDateCourseButton)
         showChildCourseButton = findViewById(R.id.showChildCourseButton)
 
+        // 지도 클릭 시 마커 추가
+        mMap.setOnMapClickListener { point ->
+            addMarker(point.latitude, point.longitude, "직접 추가한 장소")
+        }
+
         // 뒤로 가기 버튼 클릭 시 메인 페이지로 돌아가기
         backButton.setOnClickListener {
             showMainPage()
         }
 
-        // 추천 코스 버튼 클릭 시 추천 페이지 보여주기
-        recommendationsButton.setOnClickListener {
-            showRecommendationsPage()
+        // 관광지 버튼 클릭 시 관광지 페이지 보여주기
+        findViewById<Button>(R.id.showTouristSpotsButton).setOnClickListener {
+            showPlacesPage(placeList.filter { it.course == "관광지" }, "관광지")
+        }
+
+        // 문화시설 버튼 클릭 시 문화시설 페이지 보여주기
+        findViewById<Button>(R.id.showCulturalFacilitiesButton).setOnClickListener {
+            showPlacesPage(placeList.filter { it.course == "문화시설" }, "문화시설")
+        }
+
+        // 자연명소 버튼 클릭 시 자연명소 페이지 보여주기
+        findViewById<Button>(R.id.showNaturalSpotsButton).setOnClickListener {
+            showPlacesPage(placeList.filter { it.course == "자연명소" }, "자연명소")
         }
 
         // 가족 코스 버튼 클릭 시 가족 코스 페이지 보여주기
@@ -205,6 +222,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         // 아동 코스 버튼 클릭 시 아동 코스 페이지 보여주기
         showChildCourseButton.setOnClickListener {
             showChildCoursePage()
+        }
+
+        // 데이트 코스 버튼 클릭 시 데이트 코스 페이지 보여주기
+        findViewById<Button>(R.id.showDateCourseButton).setOnClickListener {
+            showPlacesPage(dateCoursePlaces, "데이트 코스")
+        }
+
+        // 추천 코스 버튼 클릭 시 추천 페이지 보여주기
+        recommendationsButton.setOnClickListener {
+            showRecommendationsPage()
+        }
+
+        // 현재 위치 버튼 클릭 시 현재 위치 보여주기
+        findViewById<Button>(R.id.showCurrentLocationButton).setOnClickListener {
+            showCurrentLocation()
         }
     }
 
@@ -238,7 +270,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // 추천 코스 목록 설정
         val recommendedPlaces = getRecommendedPlaces()
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, recommendedPlaces.map { it.name })
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_2, recommendedPlaces.map { it.name })
         placeListView.adapter = adapter
 
         // 장소를 클릭하면 해당 위치로 이동 및 마커 추가
@@ -246,7 +278,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val selectedPlace = recommendedPlaces[position]
             val latLng = LatLng(selectedPlace.latitude, selectedPlace.longitude)
             addMarker(latLng.latitude, latLng.longitude, selectedPlace.name)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
         }
     }
 
@@ -276,7 +308,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val sortedPlaces = places.sortedBy { calculateDistance(it.latitude, it.longitude) }
 
         // 어댑터 설정
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, sortedPlaces.map { it.name })
+        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_2, sortedPlaces.map { it.name })
         placeListView.adapter = adapter
 
         // 장소를 클릭하면 해당 위치로 이동 및 마커 추가
@@ -284,37 +316,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val selectedPlace = sortedPlaces[position]
             val latLng = LatLng(selectedPlace.latitude, selectedPlace.longitude)
             addMarker(latLng.latitude, latLng.longitude, selectedPlace.name)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
         }
     }
 
     // 거리 계산 함수
+
     private fun calculateDistance(latitude: Double, longitude: Double): Float {
         val currentLocation = mMap.myLocation
-        if (currentLocation != null) {
-            val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
-            val placeLatLng = LatLng(latitude, longitude)
-            return FloatArray(1).apply {
-                Location.distanceBetween(
-                    currentLatLng.latitude,
-                    currentLatLng.longitude,
-                    placeLatLng.latitude,
-                    placeLatLng.longitude,
-                    this
-                )
-            }[0]
-        }
-        return Float.MAX_VALUE
-    }
-
-    // 라인 그리기 함수
-    private fun drawLine(start: LatLng, end: LatLng) {
-        mMap.addPolyline(
-            PolylineOptions()
-                .add(start, end)
-                .width(5f)
-                .color(Color.BLUE)
-        )
+        val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+        val placeLatLng = LatLng(latitude, longitude)
+        return FloatArray(2).apply {
+            Location.distanceBetween(
+                currentLatLng.latitude,
+                currentLatLng.longitude,
+                placeLatLng.latitude,
+                placeLatLng.longitude,
+                this
+            )
+        }[0]
     }
 
     // 마커 추가 함수
@@ -344,13 +364,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
         fusedLocationClient.lastLocation
@@ -358,11 +371,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 location?.let {
                     val currentLatLng = LatLng(it.latitude, it.longitude)
                     addMarker(currentLatLng.latitude, currentLatLng.longitude, "현재 위치", true)
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16f))
                 }
             }
     }
-
     // 권한 확인 함수
     private fun checkLocationPermission(): Boolean {
         if (ActivityCompat.checkSelfPermission(
@@ -379,7 +391,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
-                1
+                2
             )
             return false
         }
